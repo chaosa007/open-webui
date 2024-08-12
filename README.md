@@ -77,6 +77,34 @@ Don't forget to explore our sibling project, [Open WebUI Community](https://open
   ```bash
   docker run -d -p 3000:8080 --add-host=host.docker.internal:host-gateway -v open-webui:/app/backend/data --name open-webui --restart always ghcr.io/open-webui/open-webui:main
   ```
+on linux systemctl, When you visit the local open-webui, if it can't connect to the ollama service, please edit the ollama.service file:
+
+
+  ```bash
+[Unit]
+Description=Ollama Service
+After=network-online.target
+
+[Service]
+ExecStart=/usr/local/bin/ollama serve
+User=ollama
+Group=ollama
+Restart=always
+RestartSec=3
+Environment="PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin"
+Environment="OLLAMA_HOST=0.0.0.0"   #add this command line
+
+[Install]
+WantedBy=default.target
+
+  ```
+then
+  ```bash
+systemctl stop ollama
+systemctl daemon-reload
+systemctl start ollama
+  ```
+
 
 - **If Ollama is on a Different Server**, use this command:
 
